@@ -1,6 +1,8 @@
 import react, { useEffect, useState } from "react";
 
 const URL_BASE_TODO = "https://playground.4geeks.com/todo";
+const URL_BASE_TODOS = "https://playground.4geeks.com/todo/todos"
+
 
 const TaskList = () => {
     const [newTask, setNewTask] = useState('');
@@ -20,7 +22,8 @@ const TaskList = () => {
     const createUser = async () => {
         try {
             await fetch(`${URL_BASE_TODO}/users/Jesus`, {
-                method: "POST"
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
             });
         } catch (error) { }
     };
@@ -53,7 +56,7 @@ const TaskList = () => {
 
     const deleteTask = async (idToDelete) => {
         try {
-            const response = await fetch(`${URL_BASE_TODO}/todos/${idToDelete}`, {
+            const response = await fetch(`${URL_BASE_TODOS}/${idToDelete}`, {
                 method: "DELETE"
             });
             if (response.ok) {
@@ -76,6 +79,22 @@ const TaskList = () => {
         };
         init();
     }, []);
+
+
+    const handleDeleteAll = async () => {
+
+        const confirm = window.confirm("Estás por borrar tus tareas, ¿Estás seguro?")
+        if (!confirm) return;
+        try {
+            const response = await fetch(`${URL_BASE_TODOS}/Jesus`, {
+                method: "DELETE"
+            });
+           await getAllTask();
+            
+        } catch (error) {
+
+        }
+    }
 
     return (
         <div className="row d-flex justify-content-center">
@@ -116,6 +135,12 @@ const TaskList = () => {
                         <span className="items-left">{holdTask.length} Items left.</span>
                     )}
                 </div>
+                <button
+                    className="btn btn-danger mt-3"
+                    onClick={handleDeleteAll}
+                >
+                    Borrar todas las tareas
+                </button>
             </div>
         </div>
     );
