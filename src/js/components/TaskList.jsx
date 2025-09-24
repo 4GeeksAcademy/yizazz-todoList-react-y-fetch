@@ -15,16 +15,21 @@ const TaskList = () => {
             const data = await response.json();
             if (response.ok) {
                 setHoldTask(data.todos);
+            } else if (response.status === 404) {
+                createUser();
             }
         } catch (error) { }
     };
 
     const createUser = async () => {
         try {
-            await fetch(`${URL_BASE_TODO}/users/Jesus`, {
+            const response = await fetch(`${URL_BASE_TODO}/users/Jesus`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" }
             });
+            if (response.ok) {
+                getAllTask();
+            }
         } catch (error) { }
     };
 
@@ -74,7 +79,6 @@ const TaskList = () => {
 
     useEffect(() => {
         const init = async () => {
-            await createUser();
             await getAllTask();
         };
         init();
@@ -86,11 +90,11 @@ const TaskList = () => {
         const confirm = window.confirm("Estás por borrar tus tareas, ¿Estás seguro?")
         if (!confirm) return;
         try {
-            const response = await fetch(`${URL_BASE_TODOS}/Jesus`, {
+            const response = await fetch(`${URL_BASE_TODO}/users/Jesus`, {
                 method: "DELETE"
             });
-           await getAllTask();
-            
+            await getAllTask();
+
         } catch (error) {
 
         }
@@ -135,12 +139,16 @@ const TaskList = () => {
                         <span className="items-left">{holdTask.length} Items left.</span>
                     )}
                 </div>
-                <button
-                    className="btn btn-danger mt-3"
-                    onClick={handleDeleteAll}
-                >
-                    Borrar todas las tareas
-                </button>
+                <div className="container row">
+                    <div className="col-12 d-flex justify-content-center">
+                        <button
+                            className="btn btn-danger mt-3 "
+                            onClick={handleDeleteAll}
+                        >
+                            Borrar todas las tareas
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     );
